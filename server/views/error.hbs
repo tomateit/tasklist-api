@@ -1,0 +1,22 @@
+{{> head}}
+
+{{> header}}
+<div class="container">
+<p>We are sorry to say, that there's some issues (what a shame).</p>
+
+<div id="error-message">
+	<p>Below provided some details:</p>
+	<ul>
+		<li>What happened: <br> <span>{{errMainText}}</span></li>
+		<li>Why it could happen: <br> <span>{{errWhy}}</span></li>
+		<li>Common code: {{errCode}}</li>
+		<li>Service info: <br>{{errBody}}</li>
+	</ul>
+</div>
+
+<script type="text/javascript">
+	
+</script>
+</div>
+
+{{> footer}}

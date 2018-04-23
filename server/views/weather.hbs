@@ -1,0 +1,21 @@
+{{> head}}
+
+{{> header}}
+<div class="container">
+<p>{{mainText}}</p>
+
+<div id="weather-forecast">
+	<p>Well well, it seems your local forecast in {{weather.address.city}} , {{weather.address.country}} :</p>
+	<ul>
+		<li>Temperature: <span>{{weather.temperature}}</span></li>
+		<li>... but it feels like <span>{{weather.apparentTemperature}}</span></li>
+		<li>Broadly speaking, it's {{weather.summary}}</li>
+	</ul>
+</div>
+
+<script type="text/javascript">
+	
+</script>
+</div>
+
+{{> footer}}
