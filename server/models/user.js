@@ -71,7 +71,12 @@ UserSchema.statics.findByToken = function (token) {
 	}
 
 
-	return User.findOne({'_id': decoded._id , tokens : {$elemMatch: { 'token' : token, 'access':'auth'}}});
+	return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  });
+	//return User.findOne({'_id': decoded._id , tokens : {$elemMatch: { 'token' : token, 'access':'auth'}}});
 };
 
 
@@ -82,8 +87,8 @@ UserSchema.pre('save', function(next) {
 
 		bcrypt.genSalt(10, (err,salt) => {
 			bcrypt.hash(user.password, salt, (err, hash) => {
-			user.password = hash;
-			next();
+				user.password = hash;
+				next();
 			})
 		})
 

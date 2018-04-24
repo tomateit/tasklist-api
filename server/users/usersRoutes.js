@@ -17,7 +17,7 @@ Router.post('/users', (req,res) => {
 	let body = _.pick(req.body, ['email','password']);
 	let user = new User(body);
 	
-	user.save().then((user) => {
+	user.save().then(() => {
 		return user.generateAuthToken();		
 	}).then((token) => {
 		res.header('x-auth', token).send(user);
@@ -27,10 +27,10 @@ Router.post('/users', (req,res) => {
 	})
 });
 
-
-
 Router.get('/users/me', authenticate, (req,res) => {
+
 	res.send(req.user);
+	
 })
 
 module.exports = Router;
