@@ -33,4 +33,14 @@ Router.get('/users/me', authenticate, (req,res) => {
 	
 })
 
+Router.delete('/users/me/token', authenticate, (req, res) => {
+	req.user.removeToken(req.token).then(() => {
+		//good case
+		res.status(200).send();
+	}, () => {
+		//bad case
+		res.status(400).send();
+	})
+})
+
 module.exports = Router;
