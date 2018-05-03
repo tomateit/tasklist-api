@@ -8,14 +8,16 @@ const _ =require('lodash');
 const {mongoose} = require('../db/mongoose');
 const {Todo} = require('../models/todo');
 
-
+const {authenticate} = require('../middleware/authenticate')
 
 
 
 Router.use(bodyParser.json());
 
-Router.get('/todos', (req,res ) => {
-	Todo.find().then((todos) => {
+Router.get('/todos', authenticate, (req,res ) => {
+	Todo.find({
+		_creator: req.user._id
+	}).then((todos) => {
 		res.send({
 			todos
 		});}
@@ -24,8 +26,9 @@ Router.get('/todos', (req,res ) => {
 	});
 });
 
-Router.post('/todos', (req, res) => {
+Router.post('/todos', authenticate, (req, res) => {
 	let todo = new Todo({
+		_creator: req.user._id,
 		text: req.body.text
 	});
 	console.log(req.body);
@@ -39,13 +42,16 @@ Router.post('/todos', (req, res) => {
 	});
 });
 
-Router.get('/todos/:todoID', (req,res) => {
+Router.get('/todos/:todoID',authenticate, (req,res) => {
 	let todoID = req.params.todoID;
 	if (!ObjectID.isValid(todoID)) {
 		return res.status(400).send('ID is not valid');
 	}
 
-	Todo.findById(todoID).then((todo) => {
+	Todo.findOne({
+		_id: todoID,
+		_creator: req.user._id
+		}).then((todo) => {
 		if (!todo) {
 			res.status(404).send('Nothing found');
 			return console.log('404 404 404');
@@ -60,12 +66,14 @@ Router.get('/todos/:todoID', (req,res) => {
 	});
 });
 
-Router.delete('/todos/:todoID', (req, res) => {
+Router.delete('/todos/:todoID', authenticate, (req, res) => {
 	let todoID = req.params.todoID;
 	if (!ObjectID.isValid(todoID)) {
 		return res.status(400).send();
 	}
-	Todo.findByIdAndRemove(todoID).then((doc) => {
+	Todo.findOneAndRemove({
+		_id: todoID,
+		_creator: req.user._id}).then((doc) => {
 		if (doc === null) {
 			return res.status(404).send();
 		}
@@ -78,7 +86,7 @@ Router.delete('/todos/:todoID', (req, res) => {
 });
 
 
-Router.patch('/todos/:todoID', (req, res) => {
+Router.patch('/todos/:todoID', authenticate, (req, res) => {
 	let todoID = req.params.todoID;
 	let body = _.pick(req.body, ['text', 'completed']);
 
@@ -93,7 +101,9 @@ Router.patch('/todos/:todoID', (req, res) => {
 		body.completedAt = null;
 	}
 
-	Todo.findByIdAndUpdate(todoID, {
+	Todo.findOneAndUpdate({
+		_id: todoID, 
+		_creator: req.user._id}, {
 		$set: body
 	}, {new: true}).then((todo) => {
 		if (!todo) {
