@@ -3,7 +3,7 @@ const express = require('express');
 // const {ObjectID} = require('mongodb');
 // const _ =require('lodash');
 const hbs = require('hbs');
-
+require('./config/config.js');
 // const {mongoose} = require('./db/mongoose');
 // const {Todo} = require('./models/todo');
 // const {User} = require('./models/user');
@@ -12,7 +12,7 @@ const todoRouter = require('./tasklist/todoAppRoutes');
 const usersRoutes = require('./users/usersRoutes.js');
 
 
-let port = process.env.PORT || 3004; 
+let port = process.env.PORT; 
 
 let app = express();
 

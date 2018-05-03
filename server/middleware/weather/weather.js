@@ -1,5 +1,5 @@
 const request = require('request');
-const token = require('../../config/keys.js').weatherToken ;
+const token = process.env.WEATHER_TOKEN;
 var getWeatherWithIP = (obj, callback) => {
     request({
         url: `https://api.darksky.net/forecast/${token}/${obj.latitude},${obj.longitude}?lang=en&units=auto&exclude=minutely,hourly,daily`,
