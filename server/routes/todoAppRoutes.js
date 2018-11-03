@@ -14,6 +14,10 @@ const {authenticate} = require('../middleware/authenticate')
 
 Router.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+    res.render('tasklist')
+});
+
 Router.get('/todos', authenticate, (req,res ) => {
 	Todo.find({
 		_creator: req.user._id
