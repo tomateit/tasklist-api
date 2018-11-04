@@ -14,8 +14,8 @@ const {authenticate} = require('../middleware/authenticate')
 
 Router.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    res.render('tasklist')
+Router.get('/', (req, res) => {
+    res.render('tasklist', {mainText: "This is todo app page"})
 });
 
 Router.get('/todos', authenticate, (req,res ) => {

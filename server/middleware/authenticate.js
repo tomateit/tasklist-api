@@ -1,6 +1,4 @@
 // Is used in usersRoutes.js 
-
-
 const {User} = require('./../models/user');
 
 let authenticate = (req, res, next) => {
@@ -13,11 +11,10 @@ let authenticate = (req, res, next) => {
 			return Promise.reject();
 		}
 
-
-
 		req.user = user;
 		req.token = token;
-		next();
+		next()
+		;
 	}).catch((e) => {
 		res.status(401).send();
 	})
