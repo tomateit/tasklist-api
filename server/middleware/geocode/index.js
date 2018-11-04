@@ -4,7 +4,7 @@ let geocodeAddressByText = (address) => {
     return new Promise((resolve, reject) => {
         let encodedAddress = encodeURIComponent(address);
         request({
-        url: `http://www.mapquestapi.com/geocoding/v1/address?key=hbbZD5AeXx76GftrVocQR7vG4FsD6vpE&location=${encodedAddress}`,
+        url: `http://www.mapquestapi.com/geocoding/v1/address?key=${process.env.GEOCODE_TOKEN}&location=${encodedAddress}`,
         json: true
         }, (error, response, body)=>{
             if (error) {
