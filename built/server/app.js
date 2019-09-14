@@ -8,7 +8,8 @@ const path = require("path");
 const errorHandler = require("errorhandler");
 const mongoose = require("mongoose");
 //routes
-const client_1 = require("./routes/client");
+const routes_1 = require("./routes");
+const login_1 = require("./routes/login");
 //schemas
 const user_1 = require("./schemas/user");
 const util_1 = require("util");
@@ -49,7 +50,12 @@ class AppServer {
             throw new Error("NO MONGODB CONNECTION PROVIDED");
         }
         MONGODB_CONNECTION = MONGODB_CONNECTION_ENV;
-        const connection = mongoose.createConnection(MONGODB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true });
+        const connection = mongoose.createConnection(MONGODB_CONNECTION, {
+            useCreateIndex: true,
+            useFindAndModify: false,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
         this.model.user = connection.model("User", user_1.UserSchema);
         //error handling
         this.app.use(errorHandler());
@@ -67,7 +73,8 @@ class AppServer {
     routes() {
         let router;
         router = express.Router();
-        client_1.IndexRoute.create(router);
+        routes_1.IndexRoute.create(router);
+        login_1.LoginRoute.create(router);
         this.app.use(router);
     }
 }

@@ -89,9 +89,15 @@ exports.UserSchema.pre('save', function (next) {
     const user = this;
     if (user.isModified('password')) {
         bcrypt.genSalt(10, (err, salt) => {
-            console.error("Generating salt failed", err);
+            if (err) {
+                console.error("Generating salt failed", err);
+                return next(err);
+            }
             bcrypt.hash(user.password, salt, (error, hash) => {
-                console.error("Hashing failed: ", error);
+                if (error) {
+                    console.error("Hashing failed: ", error);
+                    return next(error);
+                }
                 user.password = hash;
                 next();
             });
