@@ -3,3 +3,4 @@ pg
 .env
 .env.test
 .directory
+*.map
