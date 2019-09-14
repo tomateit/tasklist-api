@@ -1,0 +1,12 @@
+.container
+    form(action="POST")
+        h4 Create a new TODO
+        .input-field
+            i.material-icons.prefix mode_edit
+            label(for="title") Enter a title
+            input#title(type="text", name="title", data-length="35")
+        .input-field
+            label(for="description") Description
+            textarea#description(name="description", data-length="500")
+        .input-field
+            input(type="button", value="create")
