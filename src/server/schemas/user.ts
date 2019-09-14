@@ -1,7 +1,6 @@
 import { Schema, HookNextFunction } from "mongoose";
 import jwt = require("jsonwebtoken");
 import bcrypt = require("bcrypt");
-import { IUser } from "../interfaces/user";
 
 const jwtSecretEnv: string | undefined = process.env.JWT_SECRET;
 const jwtSecret: jwt.Secret = String(jwtSecretEnv);
@@ -103,9 +102,15 @@ UserSchema.pre('save', function(next: HookNextFunction) {
 	if (user.isModified('password')) {
 
 		bcrypt.genSalt(10, (err, salt) => {
-			console.error("Generating salt failed", err)
+			if(err) {
+				console.error("Generating salt failed", err);
+				return next(err);
+			}
 			bcrypt.hash(user.password, salt, (error, hash) => {
-				console.error("Hashing failed: ", error)
+				if(error) {
+					console.error("Hashing failed: ", error);
+					return next(error);
+				}
 				user.password = hash;
 				next();
 			})

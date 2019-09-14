@@ -2,11 +2,6 @@ import { NextFunction, Request, Response, Router } from "express";
 import { BaseRoute } from "./route";
 
 
-/**
- * / route
- *
- * @class User
- */
 export class IndexRoute extends BaseRoute {
 
   /**

@@ -8,8 +8,8 @@ import errorHandler = require("errorhandler");
 import mongoose = require("mongoose");
 
 //routes
-import { IndexRoute } from "./routes/client";
-
+import { IndexRoute } from "./routes";
+import { LoginRoute } from "./routes/login"
 //interfaces
 import { IUser } from "./interfaces/user";
 
@@ -75,7 +75,12 @@ export default class AppServer {
 		}
 		MONGODB_CONNECTION = MONGODB_CONNECTION_ENV;
 
-		const connection: mongoose.Connection = mongoose.createConnection(MONGODB_CONNECTION, {useNewUrlParser: true, useUnifiedTopology: true});
+		const connection: mongoose.Connection = mongoose.createConnection(MONGODB_CONNECTION, {
+			useCreateIndex: true,
+			useFindAndModify: false,
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		});
 		this.model.user = connection.model<IUserModel>("User", UserSchema);
 
 		//error handling
@@ -98,6 +103,7 @@ export default class AppServer {
 		router = express.Router();
 
 		IndexRoute.create(router);
+		LoginRoute.create(router);
 		this.app.use(router);
 	}
 }
