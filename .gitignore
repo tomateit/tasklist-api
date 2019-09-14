@@ -1,3 +1,5 @@
 node_modules
 pg
-server/config/keys.js
+.env
+.env.test
+.directory
