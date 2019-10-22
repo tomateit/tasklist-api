@@ -9,12 +9,13 @@ import mongoose = require("mongoose");
 
 //routes
 import { IndexRoute } from "./routes";
-import { LoginRoute } from "./routes/login"
+import { LoginRoute } from "./routes/login";
+import { AuthenticationRoute } from "./routes/authenticationApi";
 //interfaces
-import { IUser } from "./interfaces/user";
+import { IUserDocument } from "./interfaces/user";
 
 //models
-import { IModel } from "./models/model";
+// import { IModel } from "./models/model";
 import { IUserModel } from "./models/user";
 
 //schemas
@@ -29,11 +30,11 @@ export default class AppServer {
 
 	public app: express.Application;
 
-	private model: IModel;
+	// private model: IModel;
 
 	constructor() {
 		//instance defaults
-		this.model = Object(); //initialize this to an empty object
+		// this.model = Object(); //initialize this to an empty object
 
 		//create expressjs application
 		this.app = express();
@@ -41,6 +42,8 @@ export default class AppServer {
 		//configure application
 		this.config();
 	
+		// connect to db
+		this.dbsetup();
 		//add routes
 		this.routes();
 	
@@ -48,47 +51,74 @@ export default class AppServer {
 		this.api();
 	}
 
-	public config() {
+	public async config() {
 
-		
+		//---------THIRD-PARTY SETUP -------
 		this.app.use(logger("dev"));
-		this.app.use(express.static(path.join(__dirname, "..", "..", "public")));
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({
 			extended: true
 		}));
 		this.app.use(cookieParser("SECRET_GOES_HERE"));
+
+		this.app.use(express.static(path.join(__dirname, "..", "..", "public")));
 		
 		//---------TEMPLATE ENGINE SETUP -------
 		this.app.set("view engine", "pug");
 		this.app.set("views", path.join(__dirname,"..", "..","views"));
 		
+		
+
+		//error handling
 		this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
 			err.status = 404;
 			next(err);
 		});
+		this.app.use(errorHandler());
 
+	}
+
+	public async dbsetup() {
+		//---------MONGO DB SETUP -------
 		const MONGODB_CONNECTION_ENV: string | undefined = process.env.MONGODB_URI;
-		let MONGODB_CONNECTION: string;
+		let MONGODB_CONNECTION_STRING: string;
+
 		if(isUndefined(MONGODB_CONNECTION_ENV)) {
 			throw new Error("NO MONGODB CONNECTION PROVIDED")
 		}
-		MONGODB_CONNECTION = MONGODB_CONNECTION_ENV;
-
-		const connection: mongoose.Connection = mongoose.createConnection(MONGODB_CONNECTION, {
+		MONGODB_CONNECTION_STRING = MONGODB_CONNECTION_ENV;
+	
+		mongoose.connection.on("connecting", () => {
+			console.log("Connecting to db...")
+		})
+		
+		mongoose.connection.on("connected", () => {
+			console.log("Successfully connected to db.")
+		})
+		
+		mongoose.connection.on("error", (error) => {
+			console.error("DB connection failure:", error)
+		})
+		
+		await mongoose.connect(MONGODB_CONNECTION_STRING, {
 			useCreateIndex: true,
 			useFindAndModify: false,
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		});
-		this.model.user = connection.model<IUserModel>("User", UserSchema);
 
-		//error handling
-		this.app.use(errorHandler());
+		console.log("Listing collections: ", mongoose.connection.modelNames())
+
+		// this.model.user = connection.model<IUserModel>("User", UserSchema);
 	}
 
 	public api() {
-		return ;
+		let router: express.Router;
+		router = express.Router();
+
+		AuthenticationRoute.create(router);
+
+		this.app.use(router);
 	}
 
 	/**
