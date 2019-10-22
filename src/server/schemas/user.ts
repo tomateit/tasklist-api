@@ -2,6 +2,9 @@ import { Schema, HookNextFunction } from "mongoose";
 import jwt = require("jsonwebtoken");
 import bcrypt = require("bcrypt");
 
+import { IAuthenticationRequestBody } from "../interfaces/authenticationRequestBody";
+import { IUserModel, IUser } from "../models/user";
+import { IUserDocument, IUserObject } from "../interfaces/user";
 const jwtSecretEnv: string | undefined = process.env.JWT_SECRET;
 const jwtSecret: jwt.Secret = String(jwtSecretEnv);
 // tslint:disable:object-literal-sort-keys
@@ -38,41 +41,45 @@ export const UserSchema: Schema = new Schema({
 			type: String,
 			required: true
 		}
-	}]
+	}],
+	role: {
+		type: String,
+		enum: ["User", "Administrator"]
+	}
 })
 
-UserSchema.methods.toJSON = function (): object {
+UserSchema.methods.toJSON = function (): IUserObject {
 	const user = this;
 	const userObject = user.toObject();
-    const {email, username} = userObject
-	return ({email, username});
+    const { email, username } = userObject;
+	return ({ email, username });
 };
 
-UserSchema.methods.generateAuthToken = function () {
-	const user = this;
+UserSchema.methods.generateAuthToken = async function (): Promise<string> {
+	const User = this;
 	const access = 'auth';
-	const token = jwt.sign({_id: user._id.toHexString(), access}, jwtSecret).toString();
+	const token = jwt.sign({_id: User._id.toHexString(), access}, jwtSecret).toString();
 
-	user.tokens.push({
+	User.tokens.push({
 		access,
 		token
 	});
-	return user.save().then(() => {
-		return token;
-	});
+
+	await User.save();
+	return token;
 };
 
 UserSchema.methods.removeToken = function (token: string) {
-	const user = this;
+	const User = this;
 
-	return user.update({
+	return User.update({
 		$pull: {
 			tokens: {token}
 		}
 	})
 }
 
-UserSchema.statics.findByToken = function (token: string) {
+UserSchema.statics.findByToken = async function (token: string): Promise<IUserDocument>{
 
 	const User = this;
 	let decoded: any;
@@ -88,12 +95,29 @@ UserSchema.statics.findByToken = function (token: string) {
 
 
 	return User.findOne({
-    "_id": decoded._id,
-    "tokens.access": "auth",
-    "tokens.token": token,
-  });
-
+		"_id": decoded._id,
+		"tokens.access": "auth",
+		"tokens.token": token,
+  	});
 };
+
+
+UserSchema.statics.authenticateUser = async function (authRequest: IAuthenticationRequestBody): Promise<string> {
+	const { username, password } = authRequest;
+	const UserModel = this;
+	
+	//! Storing plaintext passwords in development purposes
+	const searchResult: IUser | null = await UserModel.findOne({username, password});
+
+	if (searchResult === null) {
+		return Promise.reject(new Error("USERNOTFOUND"));
+	}
+
+	const token = await searchResult.generateAuthToken();
+
+	return Promise.resolve(token)
+
+}
 
 
 UserSchema.pre('save', function(next: HookNextFunction) {
