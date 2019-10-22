@@ -49,8 +49,9 @@ export class AuthenticationRoute extends BaseRoute {
             const token: string = await User.authenticateUser(authnticationBody);
             
             const user: IUser = await User.findByToken(token);
-            
+            res.set("X-Auth", token);
             return res.send(user.toJSON())
+            
             
         } catch(error) {
             console.error(error)
