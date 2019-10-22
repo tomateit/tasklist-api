@@ -18,6 +18,8 @@ export class LoginRoute extends BaseRoute {
       router.get("/login", (req: Request, res: Response, next: NextFunction) => {
         new LoginRoute().loginPage(req, res, next);
       });
+
+      
     }
   
     /**
@@ -31,7 +33,7 @@ export class LoginRoute extends BaseRoute {
     }
   
     /**
-     * The home page route.
+     * The login page route.
      *
      * @class LoginRoute
      * @method index
@@ -45,6 +47,8 @@ export class LoginRoute extends BaseRoute {
   
       //set options
       const options: object = {
+        "error": false,
+        "errorMessage": "",
         "message": "Get access to your own todos!",
         "pageTitle": "Login"
       };
