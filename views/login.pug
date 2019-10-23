@@ -3,7 +3,7 @@ extends layout.pug
 block content
     .container.main.row.center
         h3= message
-        form(action="POST").col.s12
+        form(method="POST", action="/users").col.s12
             .row
                 .input-field.col.s6
                     label(for="username") Username
