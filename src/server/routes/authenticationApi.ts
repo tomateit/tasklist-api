@@ -56,7 +56,11 @@ export class AuthenticationRoute extends BaseRoute {
             const user: IUser = await User.findByToken(token);
             req.app.locals.user = user;
             res.set("X-Auth", token);
-            return res.redirect("/")
+            if (req.query.redirect) {
+              return res.redirect(req.query.redirect)
+            } else {
+              return res.send(user.toJSON())
+            }
             
             
         } catch(error) {
@@ -89,7 +93,11 @@ export class AuthenticationRoute extends BaseRoute {
           const user: IUser = await User.findByToken(token);
           res.locals.user = user;
           res.set("X-Auth", token);
-          return res.redirect("/")
+          if (req.query.redirect) {
+            return res.redirect(req.query.redirect)
+          } else {
+            return res.send(user.toJSON())
+          }
           
           
       } catch(error) {

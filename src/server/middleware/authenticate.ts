@@ -1,15 +1,22 @@
 import * as express from "express";
-import { IUserModel, User } from "../models/user";
+import { IUserModel, User, IUser } from "../models/user";
+import { isUndefined } from "util";
+// import { IUser } from "../interfaces/user";
 
-const authenticate = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	
+// Middleware tries to identify the author of the incoming request
+export const authenticate = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    
+    console.log("Incomplete authentication middleware")
+    // return next();
+
 	const token = req.header('x-auth');
-	if (!token) {
-		res.locals.authenticated = false
+	if (isUndefined(token)) {
+        res.locals.authenticated = false;
+        res.locals.anonymous = true;
 		return next()
 	}
-	User.findByToken(token).then((user: IUserModel ) => {
 
+	User.findByToken(token).then((user: IUser ) => {
 
 		res.locals.authenticated = true;
 		res.locals.user = user;
@@ -22,5 +29,3 @@ const authenticate = (req: express.Request, res: express.Response, next: express
 	})
 
 };
-
-module.exports = {authenticate};		
