@@ -1,6 +1,7 @@
 import { Types, Document } from "mongoose";
 import { IStepObject } from "./step";
 export interface IGoalObject {
+    id?: any,
     name: string,
     slug: string,
     class: string,
@@ -12,5 +13,5 @@ export interface IGoalObject {
 }
 
 export interface IGoalDocument extends IGoalObject, Document {
-
+    _id: Types.ObjectId
 }

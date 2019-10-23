@@ -11,16 +11,11 @@ import mongoose = require("mongoose");
 import { IndexRoute } from "./routes";
 import { LoginRoute } from "./routes/login";
 import { AuthenticationRoute } from "./routes/authenticationApi";
-//interfaces
-import { IUserDocument } from "./interfaces/user";
 
-//models
-// import { IModel } from "./models/model";
-import { IUserModel } from "./models/user";
 
-//schemas
-import { UserSchema } from "./schemas/user";
 import { isUndefined } from "util";
+import { PlansApiRoute } from "./routes/plansApi";
+import { GoalsApiRoute } from "./routes/goalsApi";
 
 export default class AppServer {
 
@@ -134,6 +129,9 @@ export default class AppServer {
 
 		IndexRoute.create(router);
 		LoginRoute.create(router);
+		PlansApiRoute.create(router);
+		GoalsApiRoute.create(router);
+
 		this.app.use(router);
 	}
 }
