@@ -19,6 +19,7 @@ export class IndexRoute extends BaseRoute {
     router.get("/", (req: Request, res: Response, next: NextFunction) => {
       new IndexRoute().index(req, res, next);
     });
+
   }
 
   /**
@@ -42,15 +43,27 @@ export class IndexRoute extends BaseRoute {
    */
   public index(req: Request, res: Response, next: NextFunction) {
     //set custom title
-    this.title = "Home | Tasklist app";
+    this.title = "Home | the app";
 
     //set options
-    const options: object = {
-      "message": "Welcome to Tasklist app",
-      "pageTitle": "Main page"
-    };
-
+    
+    res.locals.user = req.app.locals.user;
+    
+    if (res.locals.user) {
+      const options: object = Object.assign({
+        "authenticated": true,
+        "message": "Welcome to the app",
+        "pageTitle": `${res.locals.user.username}'s plans`,
+      }, res.locals);
+      this.render(req, res, "home", options);
+    } else {
+      const options: object = {
+        "authenticated": false,
+        "message": "Welcome to the app",
+        "pageTitle": "Main page",
+      };
+      this.render(req, res, "landing", options);
+    }
   
-    this.render(req, res, "index", options);
   }
 }

@@ -14,9 +14,13 @@ export class LoginRoute extends BaseRoute {
     public static create(router: Router) {
       console.log("[LoginRoute::create] Creating login route.");
   
-      //add login page route
+
       router.get("/login", (req: Request, res: Response, next: NextFunction) => {
         new LoginRoute().loginPage(req, res, next);
+      });
+
+      router.get("/signup", (req: Request, res: Response, next: NextFunction) => {
+        new LoginRoute().signupPage(req, res, next);
       });
 
       
@@ -55,5 +59,30 @@ export class LoginRoute extends BaseRoute {
   
     
       this.render(req, res, "login", options);
+    }
+
+    /**
+     * The signup page route.
+     *
+     * @class SignupRoute
+     * @method index
+     * @param req {Request} The express Request object.
+     * @param res {Response} The express Response object.
+     * @next {NextFunction} Execute the next method.
+     */
+    public signupPage(req: Request, res: Response, next: NextFunction) {
+      //set custom title
+      this.title = "Sign Up | Tasklist app";
+  
+      //set options
+      const options: object = {
+        "error": false,
+        "errorMessage": "",
+        "message": "Get an account to organize your goals!",
+        "pageTitle": "Sign Up"
+      };
+  
+    
+      this.render(req, res, "signup", options);
     }
   }
