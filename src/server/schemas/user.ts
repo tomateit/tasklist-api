@@ -64,7 +64,7 @@ UserSchema.methods.toJSON = function (): IUserObject {
 
 UserSchema.methods.generateAuthToken = async function (): Promise<string> {
 	const access = 'auth';
-	const token = jwt.sign({_id: User._id.toHexString(), access}, jwtSecret).toString();
+	const token = jwt.sign({_id: this._id.toHexString(), access}, jwtSecret).toString();
 
 	this.tokens.push({
 		access,
