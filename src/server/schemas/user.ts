@@ -1,10 +1,17 @@
 import { Schema, HookNextFunction } from "mongoose";
 import jwt = require("jsonwebtoken");
-import bcrypt = require("bcrypt");
-
+import * as bcrypt from "bcrypt";
+import { promisify } from "util";
 import { IAuthenticationRequestBody } from "../interfaces/authenticationRequestBody";
-import { IUserModel, IUser } from "../models/user";
+import { ISignupRequestBody } from "../interfaces/signupRequestBody";
+import { IUserModel, IUser, User } from "../models/user";
 import { IUserDocument, IUserObject } from "../interfaces/user";
+
+// const bcrypt = {
+// 	genSalt: promisify(bcryptmod.genSalt),
+// 	hash: promisify(bcryptmod.hash)
+// };
+
 const jwtSecretEnv: string | undefined = process.env.JWT_SECRET;
 const jwtSecret: jwt.Secret = String(jwtSecretEnv);
 // tslint:disable:object-literal-sort-keys
@@ -56,23 +63,21 @@ UserSchema.methods.toJSON = function (): IUserObject {
 };
 
 UserSchema.methods.generateAuthToken = async function (): Promise<string> {
-	const User = this;
 	const access = 'auth';
 	const token = jwt.sign({_id: User._id.toHexString(), access}, jwtSecret).toString();
 
-	User.tokens.push({
+	this.tokens.push({
 		access,
 		token
 	});
 
-	await User.save();
+	await this.save();
 	return token;
 };
 
 UserSchema.methods.removeToken = function (token: string) {
-	const User = this;
-
-	return User.update({
+	
+	return this.update({
 		$pull: {
 			tokens: {token}
 		}
@@ -81,20 +86,17 @@ UserSchema.methods.removeToken = function (token: string) {
 
 UserSchema.statics.findByToken = async function (token: string): Promise<IUserDocument>{
 
-	const User = this;
 	let decoded: any;
 
-	//! WTF????
 	try {
 		decoded = jwt.verify(token, jwtSecret);
-		console.log(JSON.stringify(decoded));
+		console.log("AUTHENTICATION ATTEMPT");
 	} catch (e) {
 		console.log('USER JWT ERRER');
 		return Promise.reject(e);
 	}
 
-
-	return User.findOne({
+	return this.findOne({
 		"_id": decoded._id,
 		"tokens.access": "auth",
 		"tokens.token": token,
@@ -106,11 +108,16 @@ UserSchema.statics.authenticateUser = async function (authRequest: IAuthenticati
 	const { username, password } = authRequest;
 	const UserModel = this;
 	
-	//! Storing plaintext passwords in development purposes
-	const searchResult: IUser | null = await UserModel.findOne({username, password});
+	const searchResult: IUser | null = await UserModel.findOne({username});
 
 	if (searchResult === null) {
 		return Promise.reject(new Error("USERNOTFOUND"));
+	}
+	
+	const passwordMatches: boolean = await searchResult.comparePasswords(password)
+
+	if (!passwordMatches) {
+		return Promise.reject(new Error("PASSWORDNOTMATCH"))
 	}
 
 	const token = await searchResult.generateAuthToken();
@@ -119,29 +126,58 @@ UserSchema.statics.authenticateUser = async function (authRequest: IAuthenticati
 
 }
 
+UserSchema.methods.hashPassword = async function () {
+	const user = this;
+	const hashedPassword = await getSaltedHash(user.password);
+	
+	user.password = hashedPassword;	
 
-UserSchema.pre('save', function(next: HookNextFunction) {
+}
 
-	const user: any = this;
-	if (user.isModified('password')) {
+UserSchema.statics.createNewUser = async function(payload: ISignupRequestBody) {
+	 const user = await this.create(payload);
+	 await user.hashPassword();
+	 return user.generateAuthToken();
 
-		bcrypt.genSalt(10, (err, salt) => {
-			if(err) {
-				console.error("Generating salt failed", err);
-				return next(err);
-			}
-			bcrypt.hash(user.password, salt, (error, hash) => {
-				if(error) {
-					console.error("Hashing failed: ", error);
-					return next(error);
-				}
-				user.password = hash;
-				next();
-			})
-		})
+}
 
-	} else {
-		next();
-	}
+UserSchema.methods.comparePasswords = async function(password: string, hash: string): Promise<boolean> {
+	return bcrypt.compare(password, this.password)
+}
 
-})
+async function getSaltedHash(password: string):Promise<string> {
+	return bcrypt
+	.genSalt()
+	.then((salt) => {
+		return bcrypt.hash(password, salt)
+		},
+		(error) => {
+		return Promise.reject(error);
+	})
+}
+
+// UserSchema.pre('save', function(next: HookNextFunction) {
+
+// 	const user: any = this;
+// 	if (user.isModified('password')) {
+
+// 		bcrypt.genSalt(10, (err, salt) => {
+// 			if(err) {
+// 				console.error("Generating salt failed", err);
+// 				return next(err);
+// 			}
+// 			bcrypt.hash(user.password, salt, (error, hash) => {
+// 				if(error) {
+// 					console.error("Hashing failed: ", error);
+// 					return next(error);
+// 				}
+// 				user.password = hash;
+// 				next();
+// 			})
+// 		})
+
+// 	} else {
+// 		next();
+// 	}
+
+// })
