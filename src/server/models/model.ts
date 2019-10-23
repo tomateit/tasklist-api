@@ -1,6 +1,6 @@
-import { Model } from "mongoose";
-import { IUserModel } from "./user";
+// import { Model } from "mongoose";
+// import { IUserModel } from "./user";
 
-export interface IModel {
-  user: Model<IUserModel>;
-}
+// export interface IModel {
+//   user: Model<IUserModel>;
+// }
