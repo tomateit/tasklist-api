@@ -11,10 +11,6 @@ export const StepSchema: Schema = new Schema({
 		unique: true,
     },
     slug: {
-        minlength: 5,
-		maxlength: 35,
-		required: true,
-		trim: true,
 		type: String,
 		unique: true,
     },
@@ -29,7 +25,6 @@ export const StepSchema: Schema = new Schema({
     },
     dueTo: {
 		type: Date,
-		required: true
     },
     completed: {
         type: Boolean,

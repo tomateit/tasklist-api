@@ -19,10 +19,11 @@ export const GoalSchema: Schema = new Schema({
     },
 	class: {
 		type: String,
-		minlength: 5,
+		minlength: 2,
 		maxlength: 35,
 	},
 	goalType: {
+		type: String,
 		enum: ["recurring", "single"]
 	},
 	description: {
@@ -35,8 +36,7 @@ export const GoalSchema: Schema = new Schema({
 		default: new Date
     },
     dueTo: {
-		type: Date,
-		required: true
+		type: Date
 	},
 	steps: [{
 		type: StepSchema
