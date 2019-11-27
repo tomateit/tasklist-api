@@ -2,10 +2,12 @@ import { Schema, HookNextFunction } from "mongoose";
 import jwt = require("jsonwebtoken");
 import * as bcrypt from "bcrypt";
 import { promisify } from "util";
+import * as Tt from "telegram-typings";
 import { IAuthenticationRequestBody } from "../interfaces/authenticationRequestBody";
 import { ISignupRequestBody } from "../interfaces/signupRequestBody";
 import { IUserModel, IUser, User } from "../models/user";
 import { IUserDocument, IUserObject } from "../interfaces/user";
+import { throwStatement } from "babel-types";
 
 // const bcrypt = {
 // 	genSalt: promisify(bcryptmod.genSalt),
@@ -23,6 +25,9 @@ export const UserSchema: Schema = new Schema({
 		type: String,
 		unique: true,
 	},
+	telegramId: {
+		type : Number,
+	},
 	email: {
 		minlength: 5,
 		required: true,
@@ -31,9 +36,12 @@ export const UserSchema: Schema = new Schema({
 		unique: true,
 	},
 	password: {
-		minlength: 6,
-		requred: true,
 		type : String,
+		minlength: 6,
+	},
+	authorizedOnWebVersion: {
+		type: Boolean,
+		default: true,
 	},
 	createdAt: {
 		type: Date,
@@ -51,7 +59,8 @@ export const UserSchema: Schema = new Schema({
 	}],
 	role: {
 		type: String,
-		enum: ["User", "Administrator"]
+		enum: ["User", "Administrator"],
+		default: "User"
 	}
 })
 
@@ -124,6 +133,15 @@ UserSchema.statics.authenticateUser = async function (authRequest: IAuthenticati
 
 	return Promise.resolve(token)
 
+}
+
+UserSchema.statics.authenticateFromTelegram = async function (userInfo: Tt.User): Promise<IUser> {
+	const UserModel = await this.updateOne({ telegramId: userInfo.id}, { telegramId: userInfo.id, username: userInfo.username }, {new: true, upsert: true});
+	if (!UserModel.password) {
+		UserModel.authorizedOnWebVersion = false;
+	}
+
+	return UserModel;
 }
 
 UserSchema.methods.hashPassword = async function () {
