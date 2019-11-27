@@ -27,13 +27,12 @@ export const UserSchema: Schema = new Schema({
 	},
 	telegramId: {
 		type : Number,
+		unique: true,
 	},
 	email: {
 		minlength: 5,
-		required: true,
 		trim: true,
 		type: String,
-		unique: true,
 	},
 	password: {
 		type : String,
