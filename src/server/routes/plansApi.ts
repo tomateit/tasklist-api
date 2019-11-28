@@ -59,7 +59,7 @@ export class PlansApiRoute extends BaseRoute {
      * @param next {NextFunction} Execute the next method.
      */
     public async getOnePlan(req: Request, res: Response, next: NextFunction) {
-        const plan = await Plan.findById(req.params.id);
+        const plan = await Plan.findWholePlanById(req.params.id);
         res.send(plan)
     }
 

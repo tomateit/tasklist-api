@@ -9,7 +9,7 @@ export interface IPlan extends  IPlanDocument {
 }
 
 export interface IPlanModel extends Model<IPlan> {
-
+    findWholePlanById(s: string): IPlan
 }
 
 export const Plan = model<IPlan, IPlanModel>("Plan", PlanSchema);

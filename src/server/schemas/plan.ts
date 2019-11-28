@@ -1,6 +1,7 @@
 import { Schema, HookNextFunction, Types } from "mongoose";
 import { GoalSchema } from "./goal";
-
+import { IPlan, IPlanModel } from "../models/plan";
+import { IPlanDocument } from "../interfaces/plan";
 // tslint:disable:object-literal-sort-keys
 export const PlanSchema: Schema = new Schema({
     name: {
@@ -53,7 +54,8 @@ export const PlanSchema: Schema = new Schema({
             default: "fixed"
         },
         identifier: {
-            type: Schema.Types.ObjectId
+            type: Schema.Types.ObjectId,
+            ref: "Goal"
         },
         className: [{
             type: String
@@ -61,3 +63,15 @@ export const PlanSchema: Schema = new Schema({
     }]
 })
 
+
+PlanSchema.statics.findWholePlanById = async function (planId: string): Promise<IPlan>{
+
+	return this.findOneById(planId).then((plan: IPlanDocument) => {
+        if (!plan) {
+            return Promise.reject(new Error("Invalid plan _id"))
+        }
+        return plan.populate({
+            path: 'goals'
+        });
+    });
+};
