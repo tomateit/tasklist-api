@@ -1,7 +1,10 @@
 # ToDo App
 *Damn obvious thing to find here*
 
-TODO: Make ToDo App usable!
+It was quite abandoned, but I decided to give it a second chance.
 
+Why? Life is getting so tigh-planned, I want to make it more surprising and unexpected.
 
-Things are changing from time to time. This was an old project to train my nodeJS skills, buried in the darkest depth of my HDD. Now i decided to restore it as part of my developer's portfolio.
+We cannot predict everything with 100% certanity, so why shall we? :)
+
+I attempted to build a monolithic app, but I'm deadly bad at it, so I rearrange it to have API, telegram and webapp part
