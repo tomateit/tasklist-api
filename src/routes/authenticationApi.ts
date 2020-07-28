@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { BaseRoute } from "./route";
-import { IAuthenticationRequestBody } from "../interfaces/authenticationRequestBody";
-import { ISignupRequestBody } from "../interfaces/signupRequestBody";
-import { User, IUser, IUserModel } from "../models/user";
-import { IUserDocument } from "../interfaces/user";
+import { IAuthenticationRequestBody } from "../types/Requests";
+// import { ISignupRequestBody } from "../types/signupRequestBody";
+import { User, IUserDocument } from "../models/User";
+// import { IUserDocument } from "../types/user";
+
+
 export class AuthenticationRoute extends BaseRoute {
 
     /**
@@ -53,7 +55,7 @@ export class AuthenticationRoute extends BaseRoute {
         try {
             const token: string = await User.authenticateUser(authnticationBody);
             
-            const user: IUser = await User.findByToken(token);
+            const user: IUserDocument = await User.findByToken(token);
             req.app.locals.user = user;
             res.set("X-Auth", token);
             if (req.query.redirect) {
@@ -90,7 +92,7 @@ export class AuthenticationRoute extends BaseRoute {
       try {
           const token: string = await User.createNewUser(signupBody);
           
-          const user: IUser = await User.findByToken(token);
+          const user: IUserDocument = await User.findByToken(token);
           res.locals.user = user;
           res.set("X-Auth", token);
           if (req.query.redirect) {

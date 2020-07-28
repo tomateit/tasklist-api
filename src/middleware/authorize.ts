@@ -1,8 +1,6 @@
 import * as express from "express";
-import { IUserModel, User, IUser } from "../models/user";
-import { UserAction } from "../types/userActions";
-import { IUserRole } from "../types/userRoles";
-// import { IUser } from "../interfaces/user";
+import {  User  } from "../models/User";
+import { IUser } from "../types/User";
 
 // Middleware checks authenticated user has permissions for a certain action
 export const authorize = (action: UserAction) => {

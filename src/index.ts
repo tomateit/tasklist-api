@@ -1,20 +1,13 @@
 import dontenv = require("dotenv");
 
-import AppServer from "./server/app";
-import TelegramBot from "./bot/index";
+import APIServer from "./app";
 
 dontenv.config();
 
 const port: string | undefined = process.env.PORT;
-const tgBotToken: string | undefined = process.env.TELEGRAM_BOT_TOKEN;
 
-const APIServer = new AppServer();
-const telegramBot = new TelegramBot(tgBotToken);
+const API = new APIServer();
 
-telegramBot.launch(() => {
-  console.log(`Telegram bot launched...`);
-});
-
-APIServer.app.listen(port, () => {
+API.app.listen(port, () => {
   console.log(`listening at port ${port}...`);
 });

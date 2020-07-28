@@ -1,5 +1,5 @@
 import * as express from "express";
-import { IUserModel, User, IUser } from "../models/user";
+import { IUserModel, User, IUser } from "../models/Tool";
 import { isUndefined } from "util";
 // import { IUser } from "../interfaces/user";
 

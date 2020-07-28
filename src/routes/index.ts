@@ -47,23 +47,6 @@ export class IndexRoute extends BaseRoute {
 
     //set options
     
-    res.locals.user = req.app.locals.user;
-    
-    if (res.locals.user) {
-      const options: object = Object.assign({
-        "authenticated": true,
-        "message": "Welcome to the app",
-        "pageTitle": `${res.locals.user.username}'s plans`,
-      }, res.locals);
-      this.render(req, res, "home", options);
-    } else {
-      const options: object = {
-        "authenticated": false,
-        "message": "Welcome to the app",
-        "pageTitle": "Main page",
-      };
-      this.render(req, res, "landing", options);
-    }
   
   }
 }
