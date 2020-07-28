@@ -1,7 +1,7 @@
 {
-  "name": "tasklist-app",
-  "version": "0.9.0",
-  "description": "That's too obvious",
+  "name": "tasklist-api",
+  "version": "0.9.1",
+  "description": "API service for my probabilistic tasklist",
   "main": "index.js",
   "scripts": {
     "start": "node built/index.js",
@@ -22,13 +22,9 @@
     "dotenv": "^8.1.0",
     "errorhandler": "^1.5.1",
     "express": "^4.16.2",
-    "jsonwebtoken": "^8.1.1",
     "mongodb": "^3.3.3",
     "mongoose": "^5.7.6",
-    "morgan": "^1.9.1",
-    "pug": "^2.0.4",
-    "slugify": "^1.3.5",
-    "telegraf": "^3.33.3"
+    "morgan": "^1.9.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
