@@ -1,6 +1,6 @@
 {
   "name": "tasklist-api",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "API service for my probabilistic tasklist",
   "main": "index.js",
   "scripts": {
@@ -16,12 +16,14 @@
   "author": "Max Ermakov",
   "license": "ISC",
   "dependencies": {
+    "@types/winston": "^2.4.4",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.26",
     "morgan": "^1.10.0",
-    "slugify": "^1.4.5"
+    "slugify": "^1.4.5",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
