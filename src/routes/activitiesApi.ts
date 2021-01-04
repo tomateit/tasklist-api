@@ -4,6 +4,9 @@ import { Activity } from "../models/Activity";
 import { UserAction } from "../types/User";
 import { authorize } from "../middleware/authorize";
 import { authenticate } from "../middleware/authenticate";
+import _logger from "../utils/logger";
+
+const logger = _logger({"source": "activity_api"})
 
 export class ActivitiesApiRoute extends BaseRoute {
 

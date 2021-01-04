@@ -4,7 +4,9 @@ import { IAuthenticationRequestBody } from "../types/Requests";
 // import { ISignupRequestBody } from "../types/signupRequestBody";
 import { User, IUserDocument } from "../models/User";
 // import { IUserDocument } from "../types/user";
+import _logger from "../utils/logger";
 
+const logger = _logger({"source": "authentication_api"})
 
 export class AuthenticationRoute extends BaseRoute {
 
@@ -55,14 +57,14 @@ export class AuthenticationRoute extends BaseRoute {
         try {
             const token: string = await User.authenticateUser(authnticationBody);
             
-            const user: IUserDocument = await User.findByToken(token);
+            const user = await User.findByToken(token);
             req.app.locals.user = user;
             res.set("X-Auth", token);
-            if (req.query.redirect) {
-              return res.redirect(req.query.redirect)
-            } else {
-              return res.send(user.toJSON())
-            }
+            // if (req.query.redirect) {
+            //   return res.redirect(req.query.redirect)
+            // } else {
+              return res.send(user!.toJSON())
+            // }
             
             
         } catch(error) {
@@ -87,19 +89,19 @@ export class AuthenticationRoute extends BaseRoute {
      * @param next {NextFunction} Execute the next method.
      */
     public async createUser(req: Request, res: Response, next: NextFunction) {
-      const signupBody: ISignupRequestBody = req.body;
+      const signupBody = req.body;
       //TODO Shall redirect to account page if ?redirect=true
       try {
-          const token: string = await User.createNewUser(signupBody);
+          const token = await User.createNewUser(signupBody);
           
-          const user: IUserDocument = await User.findByToken(token);
+          const user = await User.findByToken(token);
           res.locals.user = user;
           res.set("X-Auth", token);
-          if (req.query.redirect) {
-            return res.redirect(req.query.redirect)
-          } else {
-            return res.send(user.toJSON())
-          }
+          // if (req.query.redirect) {
+          //   return res.redirect(req.query.redirect)
+          // } else {
+            return res.send(user!.toJSON())
+          // }
           
           
       } catch(error) {
