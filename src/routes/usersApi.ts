@@ -4,6 +4,9 @@ import { User } from "../models/User";
 import { UserAction } from "../types/User";
 import { authorize } from "../middleware/authorize";
 import { authenticate } from "../middleware/authenticate";
+import _logger from "../utils/logger";
+
+const logger = _logger({"source": "users_api"})
 
 export class UsersApiRoute extends BaseRoute {
 

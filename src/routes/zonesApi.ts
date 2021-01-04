@@ -4,6 +4,9 @@ import { Zone } from "../models/Zone";
 import { UserAction } from "../types/User";
 import { authorize } from "../middleware/authorize";
 import { authenticate } from "../middleware/authenticate";
+import _logger from "../utils/logger";
+
+const logger = _logger({"source": "zones_api"})
 
 export class ZonesApiRoute extends BaseRoute {
 

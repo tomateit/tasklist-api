@@ -1,20 +1,22 @@
 import express = require("express");
 import bodyParser = require("body-parser");
 import cookieParser = require("cookie-parser");
-import logger = require("morgan");
+import httplogger = require("morgan");
 import path = require("path");
-import errorHandler = require("errorhandler");
-import mongoose = require("mongoose");
+// import errorHandler = require("errorhandler");
+import {dbConnect} from "./db/db"
 
 //routes
 import { IndexRoute } from "./routes";
 import { AuthenticationRoute } from "./routes/authenticationApi";
 
-
-import { isUndefined } from "util";
 import { UsersApiRoute } from "./routes/usersApi";
 import { ActivitiesApiRoute } from "./routes/activitiesApi";
 import { ZonesApiRoute } from "./routes/zonesApi";
+import _logger from "./utils/logger";
+
+const logger = _logger({"source": "app"})
+
 
 export default class AppServer {
 
@@ -36,13 +38,11 @@ export default class AppServer {
 
 	public async config() {
 
-		await dbsetup();
+		await dbConnect();
 		//---------THIRD-PARTY SETUP -------
-		this.app.use(logger("dev"));
+		this.app.use(httplogger("dev"));
 		this.app.use(bodyParser.json());
-		this.app.use(bodyParser.urlencoded({
-			extended: true
-		}));
+		this.app.use(bodyParser.urlencoded({ extended: true }));
 		this.app.use(cookieParser("SECRET_GOES_HERE"));
 
 		//error handling
@@ -50,7 +50,7 @@ export default class AppServer {
 			err.status = 404;
 			next(err);
 		});
-		this.app.use(errorHandler());
+		// this.app.use(errorHandler());
 
 	}
 

@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { BaseRoute } from "./route";
+import _logger from "../utils/logger";
 
+const logger = _logger({"source": "index_router"})
 
 export class IndexRoute extends BaseRoute {
 
